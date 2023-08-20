@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 
 export async function getCountryInfo() {
   try {
-    const response = await api.get(`?key=${process.env.IPREGISTRY_API_KEY}`);
+    const response = await api.get(`?key=${process.env['NEXT_PUBLIC_API_KEY']}`);
     return response;
   } catch (error) {
     if (error instanceof AxiosError) {

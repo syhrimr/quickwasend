@@ -8,13 +8,12 @@ const Input = () => {
 
   async function handleInput(event) {
     const number = await mutatePhoneNumber(event.target.value);
-    console.log({ number });
     setPhoneNumber(number);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    // sendWhatsapp(phoneNumber);
+    sendWhatsapp(phoneNumber);
   }
 
   async function mutatePhoneNumber(number: string) {
@@ -22,22 +21,17 @@ const Input = () => {
       number = number.slice(1);
     }
 
-    // TODO: steps to mutate this block
-    // 1. fetch to https://ipinfo.io
-    // 2. take the country response
-    // 3. provide list of country phone code numbers
-    // 4. select the country from the list based on the response
     const response = await getCountryInfo();
-    console.log(response);
-    // const codeNumbers = countryCode.map(item => item.code);
-    // if (number.charAt(0) === "0") {
-    //   const countryCode = response.data.location.country.code;
-    //   console.log(countryCode)
-    //   const codeNumber = countryCodeList.find(code => code.country === countryCode).code;
-    //   return codeNumber + number.slice(1);
-    // } else if (codeNumbers.includes(number.substring(0, 2))) {
-    //   return number;
-    // }
+    if (!response) return;
+    
+    const codeNumbers = countryCodeList.map(item => item.code);
+    if (number.charAt(0) === "0") {
+      const countryCode = response.data.location.country.code;
+      const codeNumber = countryCodeList.find(code => code.iso === countryCode)?.code;
+      return codeNumber + number.slice(1);
+    } else if (codeNumbers.includes(number.substring(0, 2))) {
+      return number;
+    }
   }
 
   function sendWhatsapp(number: string) {
