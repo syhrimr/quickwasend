@@ -1,0 +1,68 @@
+import { useState } from "react";
+import { getCountryInfo } from "../network/countryApi";
+import countryCodeList from "../data/countryPhoneCodes.json";
+import styles from "../styles/Input.module.css";
+
+const Input = () => {
+  const [phoneNumber, setPhoneNumber] = useState();
+
+  async function handleInput(event) {
+    const number = await mutatePhoneNumber(event.target.value);
+    console.log({ number });
+    setPhoneNumber(number);
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    // sendWhatsapp(phoneNumber);
+  }
+
+  async function mutatePhoneNumber(number: string) {
+    if (number.charAt(0) === "+") {
+      number = number.slice(1);
+    }
+
+    // TODO: steps to mutate this block
+    // 1. fetch to https://ipinfo.io
+    // 2. take the country response
+    // 3. provide list of country phone code numbers
+    // 4. select the country from the list based on the response
+    const response = await getCountryInfo();
+    console.log(response);
+    // const codeNumbers = countryCode.map(item => item.code);
+    // if (number.charAt(0) === "0") {
+    //   const countryCode = response.data.location.country.code;
+    //   console.log(countryCode)
+    //   const codeNumber = countryCodeList.find(code => code.country === countryCode).code;
+    //   return codeNumber + number.slice(1);
+    // } else if (codeNumbers.includes(number.substring(0, 2))) {
+    //   return number;
+    // }
+  }
+
+  function sendWhatsapp(number: string) {
+    // navigate to web WA to directly open chat window 
+    const baseURL = "https://web.whatsapp.com/send";
+    const query = new URLSearchParams({
+      "phone": number
+    });
+    const url = `${baseURL}/?${query}`;
+    window.open(url, "_blank");
+  }
+  
+  return (
+    <form className={styles.container} onSubmit={handleSubmit}>
+      <label className={styles.field}>
+        Input Your Chat Phone Number
+        <input
+          className={styles.input}
+          type="text" pattern="[0-9]*"
+          onInput={handleInput}
+        />
+      </label>
+      <input className={styles.button} type="submit" value="Submit" />
+    </form>
+  )
+};
+
+export default Input;
