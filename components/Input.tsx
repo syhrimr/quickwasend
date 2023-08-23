@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { getCountryInfo } from "../network/countryApi";
 import countryCodeList from "../data/countryPhoneCodes.json";
 import styles from "../styles/Input.module.css";
 
 const Input = () => {
-  const [phoneNumber, setPhoneNumber] = useState();
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
 
-  async function handleInput(event) {
+  async function handleInput(event: ChangeEvent<HTMLInputElement>) {
     const number = await mutatePhoneNumber(event.target.value);
     setPhoneNumber(number);
   }
 
-  function handleSubmit(event) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     sendWhatsapp(phoneNumber);
   }
@@ -34,8 +34,9 @@ const Input = () => {
     }
   }
 
-  function sendWhatsapp(number: string) {
-    // navigate to web WA to directly open chat window 
+  function sendWhatsapp(number: string | undefined) {
+    // navigate to web WA to directly open chat window
+    if (!number) return;
     const baseURL = "https://web.whatsapp.com/send";
     const query = new URLSearchParams({
       "phone": number
