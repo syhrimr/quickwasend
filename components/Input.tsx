@@ -1,10 +1,11 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { getCountryInfo } from "../network/countryApi";
 import countryCodeList from "../data/countryPhoneCodes.json";
-import styles from "../styles/Input.module.css";
+import snackbar from "../utils/snackbar";
 
 const Input = () => {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
+  const { alert } = snackbar();
 
   async function handleInput(event: ChangeEvent<HTMLInputElement>) {
     const number = await mutatePhoneNumber(event.target.value);
@@ -36,7 +37,10 @@ const Input = () => {
 
   function sendWhatsapp(number: string | undefined) {
     // navigate to web WA to directly open chat window
-    if (!number) return;
+    if (!number) {
+      alert("Please insert the right number!");
+      return;
+    }
     const baseURL = "https://web.whatsapp.com/send";
     const query = new URLSearchParams({
       "phone": number
@@ -46,16 +50,22 @@ const Input = () => {
   }
   
   return (
-    <form className={styles.container} onSubmit={handleSubmit}>
-      <label className={styles.field}>
-        Input Your Chat Phone Number
-        <input
-          className={styles.input}
-          type="text" pattern="[0-9]*"
-          onInput={handleInput}
-        />
-      </label>
-      <input className={styles.button} type="submit" value="Submit" />
+    <form className="px-8 mt-14 mx-auto w-96" autocomplete="off" onSubmit={handleSubmit}>
+      <div className="flex flex-row gap-x-2 w-auto mb-8">
+        <label className="block w-[25%]">
+          <input className="block w-full h-10 bg-white border border-slate-300 rounded-md px-4" placeholder="+62" type="text" pattern="+[0-9]*" />
+        </label>
+        
+        <label className="block w-[50%]">
+          <input
+            className="block w-full h-10 bg-white border border-slate-300 rounded-md px-4"
+            type="text" pattern="[0-9]*" placeholder="812345678"
+            onInput={handleInput}
+          />
+        </label>
+      </div>
+
+      <button className="px-8 py-2 text-base text-slate-50 font-semibold rounded-full border-none bg-[#4AC959] hover:border-[#273443]" type="submit">Send</button>
     </form>
   )
 };

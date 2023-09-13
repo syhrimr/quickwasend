@@ -1,14 +1,17 @@
 import type { NextPage } from "next"
 
 import Input from "../components/Input"
-import Footer from "../components/Footer"
 
 const Home: NextPage = () => {
   return (
-    <div>
-      <Input></Input>
+    <div className="text-center">
+      <h1 className="text-3xl font-bold mb-4">
+        Quick Whatsapp Send!
+      </h1>
 
-     <Footer></Footer>
+      <p className="px-14">Copy paste the Whatsapp number that you want to chat and quickly chat with it!</p>
+
+      <Input></Input>
     </div>
   )
 }
