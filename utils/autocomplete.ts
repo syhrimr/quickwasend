@@ -56,7 +56,7 @@ export default function autocomplete(
     }
   });
 
-  function addActive(x: HTMLDivElement[] | undefined) {
+  function addActive(x: NodeListOf<HTMLDivElement> | undefined) {
     if (!x) return false;
     removeActive(x);
     if (currentFocus >= x.length) currentFocus = 0;
@@ -64,7 +64,7 @@ export default function autocomplete(
     x[currentFocus].classList.add("autocomplete-active");
   }
 
-  function removeActive(x: HTMLDivElement[] | undefined) {
+  function removeActive(x: NodeListOf<HTMLDivElement> | undefined) {
     if (!x) return;
     for (let i = 0; i < x.length; i++) {
       x[i].classList.remove("autocomplete-active");
