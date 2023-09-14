@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-import { ChangeEvent, FormEvent, MouseEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect, useCallback } from "react";
+import { debounce } from "lodash";
 import { getCountryInfo } from "../network/countryApi";
 
 import countryCodeList from "../data/countryPhoneCodes.json";
@@ -19,7 +20,9 @@ const Input = () => {
   const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
   const [countryNumber, setCountryNumber] = useState<string | undefined>("62");
   
-  const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`
+  const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debounceMutatePhoneNumber = useCallback(debounce(mutatePhoneNumber, 2000), []);
 
   useEffect(() => {
     const selectedCountry: SelectedCountry | undefined = countryCodeList.find(item => item.code === countryNumber);
@@ -29,10 +32,7 @@ const Input = () => {
   }, [countryNumber])
 
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    setTimeout(async () => {
-      const number = await mutatePhoneNumber(event.target.value);
-      setPhoneNumber(number);
-    }, 500)
+    debounceMutatePhoneNumber(event.target.value);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -41,6 +41,10 @@ const Input = () => {
   }
 
   async function mutatePhoneNumber(number: string) {
+    number = number.replace(/\s/g, ""); // remove whitespace
+
+    if (number.length < 10) return;
+
     const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
     const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
 
@@ -66,7 +70,7 @@ const Input = () => {
     codeInput.value = countryNumber as string;
     phoneInput.value = number as string;
 
-    return countryNumber + number;
+    setPhoneNumber(countryNumber + number);
   }
 
   function sendWhatsapp(number: string | undefined) {
@@ -94,7 +98,7 @@ const Input = () => {
       return;
     }
 
-    const number = await mutatePhoneNumber(pasteResult);
+    const number = debounceMutatePhoneNumber(pasteResult);
     setPhoneNumber(number);
   }
 
@@ -106,13 +110,22 @@ const Input = () => {
     });
   }
 
+  function clearPhoneNumber() {
+    setCountryNumber("62");
+    setCountryCode("id");
+    setCountryName("Indonesia");
+    setPhoneNumber("");
+
+    const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
+    phoneInput.value = phoneNumber as string;
+  }
+
   return (
     <form className="px-8 mt-14 mx-auto w-96" onSubmit={handleSubmit}>
       <div className="flex flex-row gap-x-2 w-auto mb-8">
         <label className="block w-[30%]">
           <div
-            className="flex flex-row relative h-10 border border-slate-300 rounded-md px-2"
-            onClick={triggerAutocomplete}
+            className="flex flex-row relative border border-slate-300 rounded-md px-2"
           >
             <Image
               loader={imageLoader}
@@ -123,17 +136,13 @@ const Input = () => {
               className="h-[12px] my-auto"
             />
 
-            <span
-              className="block w-full my-auto pl-2 focus:outline-none text-slate-400"
-            >
-              {countryNumber}
-            </span>
-
             <input
               id="autoCompleteInput"
-              className="w-0"
+              className="block w-full h-10 bg-white pl-3 focus:outline-none"
+              placeholder="62"
               type="text"
               pattern="[0-9]*"
+              onFocus={triggerAutocomplete}
             />
 
             <svg
@@ -155,15 +164,33 @@ const Input = () => {
         </label>
 
         <label className="block w-[60%]">
-          <input
-            id="phoneInput"
-            className="block w-full h-10 px-4 bg-white border border-slate-300 rounded-md px-4 text-slate-400 focus:outline-none"
-            type="text"
-            pattern="[0-9]*"
-            placeholder="812345678"
-            disabled
-            onInput={handleInput}
-          />
+          <div className="flex flex-row relative border border-slate-300 rounded-md px-2">
+            <input
+              id="phoneInput"
+              className="block w-full h-10 px-2 bg-white focus:outline-none"
+              type="text"
+              pattern="[0-9]*"
+              placeholder="812345678"
+              onInput={handleInput}
+            />
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="rgb(30, 41, 59)"
+              className="w-6 h-6 my-auto"
+              onClick={clearPhoneNumber}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12" 
+              />
+            </svg>
+
+          </div>
         </label>
 
         <label className="block w-[10%]">
