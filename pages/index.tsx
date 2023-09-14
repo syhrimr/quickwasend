@@ -9,7 +9,7 @@ const Home: NextPage = () => {
         Quick Whatsapp Send!
       </h1>
 
-      <p className="px-14">Copy paste the Whatsapp number that you want to chat and quickly chat with it!</p>
+      <p className="px-20">Copy paste or input the Whatsapp number that you want to chat and quickly chat with it!</p>
 
       <Input></Input>
     </div>
