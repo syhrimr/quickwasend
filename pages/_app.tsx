@@ -9,8 +9,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Fast Whataspp Send</title>
-        <meta name="description" content="Start to chat with using Whatsapp by not register a new contact to your phone." />
+        <title>Quick Whataspp Send</title>
+        <meta name="description" content="Start to chat with Whatsapp quickly and save your contact for storing unnecessary number." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
