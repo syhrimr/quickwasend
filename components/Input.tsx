@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, MouseEvent, useState, useEffect } from "react";
-import { debounce } from "lodash";
 import { getCountryInfo } from "../network/countryApi";
 
 import countryCodeList from "../data/countryPhoneCodes.json";
