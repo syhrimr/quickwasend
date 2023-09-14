@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { ChangeEvent, FormEvent, MouseEvent, useState, useEffect } from "react";
 import { getCountryInfo } from "../network/countryApi";
 
@@ -16,6 +18,8 @@ const Input = () => {
   const [countryCode, setCountryCode] = useState<string | undefined>("id");
   const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
   const [countryNumber, setCountryNumber] = useState<string | undefined>("62");
+  
+  const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`
 
   useEffect(() => {
     const selectedCountry: SelectedCountry | undefined = countryCodeList.find(item => item.code === countryNumber);
@@ -110,10 +114,11 @@ const Input = () => {
             className="flex flex-row relative h-10 border border-slate-300 rounded-md px-2"
             onClick={triggerAutocomplete}
           >
-            <img
+            <Image
+              loader={imageLoader}
               src={`https://flagcdn.com/16x12/${countryCode}.png`}
-              width="16"
-              height="12"
+              width={16}
+              height={12}
               alt={countryName}
               className="h-[12px] my-auto"
             />
