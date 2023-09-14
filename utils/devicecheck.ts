@@ -3,9 +3,18 @@ type DeviceCheckOutput = {
 }
 
 export default function devicecheck(): DeviceCheckOutput {
-  // the logic here is every device that has
-  // less than 800x600 resolution considered as mobile
-  const isMobile = ( window.innerWidth <= 800 ) && ( window.innerHeight <= 600 );
+  const toMatch = [
+    /Android/i,
+    /webOS/i,
+    /iPhone/i,
+    /iPod/i,
+    /BlackBerry/i,
+    /Windows Phone/i
+  ];
+
+  const isMobile = toMatch.some((toMatchItem) => {
+    return navigator.userAgent.match(toMatchItem);
+  });
 
   return { isMobile };
 }
