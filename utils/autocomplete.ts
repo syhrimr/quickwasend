@@ -39,18 +39,19 @@ export default function autocomplete(
 
   inp.addEventListener("keydown", function (e: KeyboardEvent) {
     let x = document.getElementById(`${this.id}autocomplete-list`);
-    if (x) x = x.getElementsByTagName("div");
+    let y: HTMLDivElement[];
+    if (x) y = x.querySelectorAll("div");
     
     if (e.key === "ArrowDown") {
       currentFocus++;
-      addActive(x);
+      addActive(y);
     } else if (e.key === "ArrowUp") {
       currentFocus--;
-      addActive(x);
+      addActive(y);
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (currentFocus > -1) {
-        if (x) x[currentFocus]?.click();
+        if (y) y[currentFocus]?.click();
       }
     }
   });
