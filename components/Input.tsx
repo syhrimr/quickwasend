@@ -42,8 +42,8 @@ const Input = () => {
       setCountryNumber(number.slice(1, 3))
       number = number.slice(3);
 
-      codeInput.value = countryNumber;
-      phoneInput.value = number;
+      codeInput.value = countryNumber as string;
+      phoneInput.value = number as string;
     } else if (number.charAt(0) === "0") {
       const response = await getCountryInfo();
       if (!response) return;
@@ -55,8 +55,8 @@ const Input = () => {
       setCountryNumber(codeNumber);
       number = number.slice(1);
       
-      codeInput.value = countryNumber;
-      phoneInput.value = number.slice(1);
+      codeInput.value = countryNumber as string;
+      phoneInput.value = number.slice(1) as string;
     }
     // else if (codeNumbers.includes(number.substring(0, 2))) {
     //   setTimeout(() => {
