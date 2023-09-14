@@ -1,8 +1,14 @@
-export default function autocomplete(inp: HTMLInputElement, arr: string[], cb: void) {
+type AutoCompleteCallback = (t: string) => void
+
+export default function autocomplete(
+  inp: HTMLInputElement,
+  arr: string[],
+  cb: AutoCompleteCallback
+) {
   let currentFocus: number;
 
-  inp.addEventListener("input", function (e: Event) {
-    let a, b, i;
+  inp.addEventListener("input", function () {
+    let a: HTMLElement, b: HTMLElement;
     const val = this.value;
     closeAllLists();
     if (!val) {
@@ -12,14 +18,16 @@ export default function autocomplete(inp: HTMLInputElement, arr: string[], cb: v
     a = document.createElement("DIV");
     a.setAttribute("id", `${this.id}autocomplete-list`);
     a.setAttribute("class", "autocomplete-items");
+    
     this.parentNode?.appendChild(a);
-    for (i = 0; i < arr.length; i++) {
+    
+    for (let i = 0; i < arr.length; i++) {
       if (arr[i].toUpperCase().startsWith(val.toUpperCase())) {
         b = document.createElement("DIV");
         b.innerHTML = `<strong>${arr[i].substring(0, val.length)}</strong>`;
         b.innerHTML += arr[i].substring(val.length);
         b.innerHTML += `<input type='hidden' value='${arr[i]}'>`;
-        b.addEventListener("click", function (e: MouseEvent) {
+        b.addEventListener("click", function () {
           inp.value = this.getElementsByTagName("input")[0].value;
           cb(inp.value);
           closeAllLists();
@@ -32,6 +40,7 @@ export default function autocomplete(inp: HTMLInputElement, arr: string[], cb: v
   inp.addEventListener("keydown", function (e: KeyboardEvent) {
     let x = document.getElementById(`${this.id}autocomplete-list`);
     if (x) x = x.getElementsByTagName("div");
+    
     if (e.key === "ArrowDown") {
       currentFocus++;
       addActive(x);

@@ -105,7 +105,9 @@ const Input = () => {
   function handleFocus() {
     const codeNumbers = countryCodeList.map(item => item.code);
     const autocompleteInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
-    autocomplete(autocompleteInput, codeNumbers, (value) => setCountryNumber(value));
+    autocomplete(autocompleteInput, codeNumbers, (value: string): void => {
+      setCountryNumber(value);
+    });
   }
 
   return (
