@@ -3,6 +3,7 @@ import { getCountryInfo } from "../network/countryApi";
 
 import countryCodeList from "../data/countryPhoneCodes.json";
 import autocomplete from "../utils/autocomplete";
+import devicecheck from "../utils/devicecheck";
 
 type SelectedCountry = {
   code: string;
@@ -49,7 +50,7 @@ const Input = () => {
       if (!response) return;
 
       const countryCode = response.data.location.country.code;
-      const codeNumbers = countryCodeList.map(item => item.code);
+      // const codeNumbers = countryCodeList.map(item => item.code);
       const codeNumber = countryCodeList.find(code => code.iso === countryCode)?.code;
 
       setCountryNumber(codeNumber);
@@ -77,7 +78,8 @@ const Input = () => {
       alert("Please insert the right number!");
       return;
     }
-    const baseURL = "https://web.whatsapp.com/send";
+    const { isMobile } = devicecheck();
+    const baseURL = `https://${isMobile ? "api" : "web"}.whatsapp.com/send`;
     const query = new URLSearchParams({
       "phone": number
     });
