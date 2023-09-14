@@ -39,7 +39,7 @@ export default function autocomplete(
 
   inp.addEventListener("keydown", function (e: KeyboardEvent) {
     let x = document.getElementById(`${this.id}autocomplete-list`);
-    let y: HTMLDivElement[];
+    let y: NodeList<HTMLDivElement>;
     if (x) y = x.querySelectorAll("div");
     
     if (e.key === "ArrowDown") {
