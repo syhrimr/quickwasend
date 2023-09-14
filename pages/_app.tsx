@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       
       <div className="flex flex-col items-center min-h-screen bg-slate-50 overflow-hidden">
-        <main className="flex-1 p-8">
+        <main className="flex flex-1 items-center p-8">
           <div className={styles.container}>
             <Component {...pageProps} />
           </div>
