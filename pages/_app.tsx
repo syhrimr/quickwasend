@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      <div className="flex flex-col items-center min-h-screen bg-slate-50 overflow-hidden">
+      <div className="flex flex-col items-center min-h-screen bg-green-50 overflow-hidden">
         <main className="flex flex-1 items-center p-8">
           <div className={styles.container}>
             <Component {...pageProps} />

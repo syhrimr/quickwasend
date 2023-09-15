@@ -121,79 +121,85 @@ const Input = () => {
   }
 
   return (
-    <form className="px-8 mt-14 mx-auto w-96" onSubmit={handleSubmit}>
-      <div className="flex flex-row gap-x-2 w-auto mb-8">
-        <label className="block w-[30%]">
-          <div
-            className="flex flex-row relative border border-slate-300 rounded-md px-2"
-          >
-            <Image
-              loader={imageLoader}
-              src={`https://flagcdn.com/16x12/${countryCode}.png`}
-              width={16}
-              height={12}
-              alt={countryName}
-              className="h-[12px] my-auto"
-            />
-
-            <input
-              id="autoCompleteInput"
-              className="block w-full h-10 bg-white pl-3 focus:outline-none"
-              placeholder="62"
-              type="text"
-              pattern="[0-9]*"
-              onFocus={triggerAutocomplete}
-            />
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6 my-auto"
+    <form className="px-8 mt-10 mx-auto w-96" onSubmit={handleSubmit}>
+      <div className="flex flex-row w-auto mb-8">
+        <div className="flex flex-row w-[90%] bg-white border border-slate-300 rounded-md">
+          <label className="block w-[30%] border-r-1">
+            <div
+              className="flex flex-row relative px-2"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              <Image
+                loader={imageLoader}
+                src={`https://flagcdn.com/16x12/${countryCode}.png`}
+                width={16}
+                height={12}
+                alt={countryName}
+                className="h-[12px] my-auto"
               />
-            </svg>
 
-          </div>
-        </label>
-
-        <label className="block w-[60%]">
-          <div className="flex flex-row relative border border-slate-300 rounded-md px-2">
-            <input
-              id="phoneInput"
-              className="block w-full h-10 px-2 bg-white focus:outline-none"
-              type="text"
-              pattern="[0-9]*"
-              placeholder="812345678"
-              onInput={handleInput}
-            />
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="rgb(30, 41, 59)"
-              className="w-6 h-6 my-auto"
-              onClick={clearPhoneNumber}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12" 
+              <input
+                id="autoCompleteInput"
+                className="block w-full h-10 pl-3 bg-transparent focus:outline-none"
+                placeholder="62"
+                type="text"
+                pattern="[0-9]*"
+                onFocus={triggerAutocomplete}
               />
-            </svg>
+              
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 my-auto"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </div>
+          </label>
 
-          </div>
-        </label>
+          <label className="block w-[70%]">
+            <div className="flex flex-row relative px-2">
+              <input
+                id="phoneInput"
+                className="block w-full h-10 bg-transparent focus:outline-none"
+                type="text"
+                pattern="[0-9]*"
+                placeholder="812345678"
+                onInput={handleInput}
+              />
 
-        <label className="block w-[10%]">
+              <button
+                className="h-full m-auto"
+                title="Clear input button"
+                type="button"
+                onClick={clearPhoneNumber}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="rgb(30, 41, 59)"
+                  className="w-6 h-6 hover:translate-y-[-2px] hover:drop-shadow-md"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12" 
+                  />
+                </svg>
+              </button>
+            </div>
+          </label>
+        </div>
+
+        <label className="block w-[10%] ml-2">
           <button
             className="h-full m-auto"
             title="Phone number paste button"
@@ -206,7 +212,7 @@ const Input = () => {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="rgb(30, 41, 59, 1)"
-              className="w-6 h-6"
+              className="w-6 h-6 hover:translate-y-[-2px] hover:drop-shadow-md"
             >
               <path
                 strokeLinecap="round"
@@ -218,7 +224,7 @@ const Input = () => {
       </div>
 
       <button
-        className="px-8 py-2 text-base text-slate-50 font-semibold rounded-full border-none bg-[#4AC959] hover:border-[#273443]"
+        className="px-8 py-2 text-base text-slate-50 font-semibold rounded-full border-none bg-[#4AC959] hover:translate-y-[-2px] hover:shadow-md"
         type="submit"
       >
         Send
