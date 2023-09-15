@@ -18,18 +18,18 @@ const Input = () => {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
   const [countryCode, setCountryCode] = useState<string | undefined>("id");
   const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
-  const [countryNumber, setCountryNumber] = useState<string | undefined>("62");
+  const [countryNumber, setCountryNumber] = useState<string | undefined>("");
   
   const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounceMutatePhoneNumber = useCallback(debounce(mutatePhoneNumber, 2000), []);
 
   useEffect(() => {
-    const selectedCountry: SelectedCountry | undefined = countryCodeList.find(item => item.code === countryNumber);
+    const selectedCountry: SelectedCountry | undefined = countryCodeList.find(item => item.iso === countryCode?.toUpperCase());
     setCountryCode(selectedCountry?.iso.toLowerCase());
     setCountryName(selectedCountry?.country);
     setCountryNumber(selectedCountry?.code);
-  }, [countryNumber])
+  }, [countryCode])
 
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
     debounceMutatePhoneNumber(event.target.value);
@@ -62,7 +62,7 @@ const Input = () => {
 
       setCountryNumber(codeNumber);
       number = number.slice(1);
-    } else if (codeNumbers.includes(number.substring(0, 2))) {
+    } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
       setCountryNumber(number.slice(0, 2))
       number = number.slice(2);
     }
@@ -111,13 +111,15 @@ const Input = () => {
   }
 
   function clearPhoneNumber() {
-    setCountryNumber("62");
+    setCountryNumber("");
     setCountryCode("id");
     setCountryName("Indonesia");
     setPhoneNumber("");
 
     const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
-    phoneInput.value = phoneNumber as string;
+    const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
+    phoneInput.value = "";
+    codeInput.value = "";
   }
 
   return (
