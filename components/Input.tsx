@@ -116,15 +116,15 @@ const Input = ({ initData: data, error }) => {
   }
 
   function clearPhoneNumber() {
-    setCountryNumber("");
-    setCountryCode("id");
-    setCountryName("Indonesia");
+    setCountryCode(data.location.country?.code.toLowerCase());
+    setCountryName(data.location.country?.name);
+    setCountryNumber(data.location.country?.calling_code);
     setPhoneNumber("");
 
     const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
     const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
     phoneInput.value = "";
-    codeInput.value = "";
+    codeInput.value = countryNumber;
   }
 
   return (
