@@ -6,13 +6,7 @@ import countryCodeList from "../data/countryPhoneCodes.json";
 import autocomplete from "../utils/autocomplete";
 import devicecheck from "../utils/devicecheck";
 
-type SelectedCountry = {
-  code: string;
-  country: string;
-  iso: string;
-}
-
-const Input = ({ initData: data, error }) => {
+const Input = ({ initData: data, error, changeInputValue }) => {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
   const [countryCode, setCountryCode] = useState<string | undefined>("id");
   const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
@@ -42,9 +36,6 @@ const Input = ({ initData: data, error }) => {
 
     if (number.length < 10) return;
 
-    const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
-    const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
-
     const codeNumbers = countryCodeList.map(item => item.code);
 
     if (number.charAt(0) === "+") {
@@ -52,29 +43,17 @@ const Input = ({ initData: data, error }) => {
       number = number.slice(3);
     } else if (number.charAt(0) === "0") {
       const selectedItem = countryCodeList.find(code => {
-        console.log({
-          code: code.iso,
-          countryCode: countryCode.toUpperCase()
-        })
         return code.iso == countryCode.toUpperCase()
       });
       
       setCountryNumber(selectedItem?.code);
       number = number.slice(1);
-      
-      console.log({
-        countryNumber,
-        countryCode,
-        code: selectedItem.code
-      })
     } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
       setCountryNumber(number.slice(0, 2))
       number = number.slice(2);
     }
     
-    codeInput.value = countryNumber as string;
-    phoneInput.value = number as string;
-
+    changeInputValue(countryNumber, number);
     setPhoneNumber(countryNumber + number);
   }
 
@@ -94,17 +73,18 @@ const Input = ({ initData: data, error }) => {
   }
 
   async function handlePaste() {
+    
     const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
     let pasteResult = await navigator.clipboard.readText();
     pasteResult = pasteResult.replace(/\s/g, ""); // remove whitespace
-
+    
     if (!phoneNumberRegex.test(pasteResult)) {
-      alert("The paste phone number is invalid!");
+      alert("The paste phone number is invalid! The correct sample format e.g. 08123456789");
       return;
     }
-
-    const number = debounceMutatePhoneNumber(pasteResult);
-    setPhoneNumber(number);
+    
+    changeInputValue(); // reset field
+    mutatePhoneNumber(pasteResult);
   }
 
   function triggerAutocomplete() {
@@ -121,10 +101,7 @@ const Input = ({ initData: data, error }) => {
     setCountryNumber(data.location.country?.calling_code);
     setPhoneNumber("");
 
-    const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
-    const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
-    phoneInput.value = "";
-    codeInput.value = countryNumber;
+    changeInputValue(countryNumber);
   }
 
   return (
