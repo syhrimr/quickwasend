@@ -1,8 +1,6 @@
 import Image from "next/image";
 
-import { ChangeEvent, FormEvent, useState, useEffect, useCallback } from "react";
-import { debounce } from "lodash";
-import { getCountryInfo } from "../network/countryApi";
+import { ChangeEvent, FormEvent, useState, useEffect } from "react";
 
 import countryCodeList from "../data/countryPhoneCodes.json";
 import autocomplete from "../utils/autocomplete";
@@ -14,25 +12,24 @@ type SelectedCountry = {
   iso: string;
 }
 
-const Input = () => {
+const Input = ({ initData: data, error }) => {
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
   const [countryCode, setCountryCode] = useState<string | undefined>("id");
   const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
   const [countryNumber, setCountryNumber] = useState<string | undefined>("");
-  
+
   const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debounceMutatePhoneNumber = useCallback(debounce(mutatePhoneNumber, 2000), []);
 
   useEffect(() => {
-    const selectedCountry: SelectedCountry | undefined = countryCodeList.find(item => item.iso === countryCode?.toUpperCase());
-    setCountryCode(selectedCountry?.iso.toLowerCase());
-    setCountryName(selectedCountry?.country);
-    setCountryNumber(selectedCountry?.code);
-  }, [countryCode])
+    if (data && !error) {
+      setCountryCode(data.location.country?.code.toLowerCase());
+      setCountryName(data.location.country?.name);
+      setCountryNumber(data.location.country?.calling_code);
+    }
+  }, [data, error])
 
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    debounceMutatePhoneNumber(event.target.value);
+    mutatePhoneNumber(event.target.value);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -54,14 +51,22 @@ const Input = () => {
       setCountryNumber(number.slice(1, 3))
       number = number.slice(3);
     } else if (number.charAt(0) === "0") {
-      const response = await getCountryInfo();
-      if (!response) return;
-
-      const countryCode = response.data.location.country.code;
-      const codeNumber = countryCodeList.find(code => code.iso === countryCode)?.code;
-
-      setCountryNumber(codeNumber);
+      const selectedItem = countryCodeList.find(code => {
+        console.log({
+          code: code.iso,
+          countryCode: countryCode.toUpperCase()
+        })
+        return code.iso == countryCode.toUpperCase()
+      });
+      
+      setCountryNumber(selectedItem?.code);
       number = number.slice(1);
+      
+      console.log({
+        countryNumber,
+        countryCode,
+        code: selectedItem.code
+      })
     } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
       setCountryNumber(number.slice(0, 2))
       number = number.slice(2);
@@ -143,6 +148,7 @@ const Input = () => {
                 id="autoCompleteInput"
                 className="block w-full h-10 pl-3 bg-transparent focus:outline-none"
                 placeholder="62"
+                defaultValue={countryNumber}
                 type="text"
                 pattern="[0-9]*"
                 onFocus={triggerAutocomplete}
@@ -169,7 +175,7 @@ const Input = () => {
             <div className="flex flex-row relative px-2">
               <input
                 id="phoneInput"
-                className="block w-full h-10 bg-transparent focus:outline-none"
+                className="block w-full h-10 px-2 bg-transparent focus:outline-none"
                 type="text"
                 pattern="[0-9]*"
                 placeholder="812345678"
