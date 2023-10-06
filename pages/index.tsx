@@ -1,14 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import type { NextPage } from "next";
+
+import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
 import Input from "../components/Input";
+
 import useCountryInfo from "../hooks/useCountryInfo";
 import countryCodeList from "../data/countryPhoneCodes.json";
 import autocomplete from "../utils/autocomplete";
 import devicecheck from "../utils/devicecheck";
 
 const Home: NextPage = () => {
+  const router = useRouter();
   const { data, error, isLoading } = useCountryInfo();
 
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
@@ -23,6 +27,15 @@ const Home: NextPage = () => {
       setCountryNumber(data.location.country?.calling_code);
     }
   }, [data, error]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    if (router.query) {
+      const { phone } = router.query;
+      mutatePhoneNumber(phone as string);
+    }
+  }, [router.isReady]);
   
   const parsedData = {
     phoneNumber,
@@ -51,18 +64,26 @@ const Home: NextPage = () => {
       number = number.slice(3);
     } else if (number.charAt(0) === "0") {
       const selectedItem = countryCodeList.find(code => {
-        return code.iso == countryCode.toUpperCase()
+        return code.iso == countryCode.toUpperCase();
       });
       
       setCountryNumber(selectedItem?.code);
       number = number.slice(1);
     } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
-      setCountryNumber(number.slice(0, 2))
+      parsedData.countryNumber = number.slice(0, 2);
+      setCountryNumber(number.slice(0, 2));
       number = number.slice(2);
     }
-    
+
     changeInputValue(countryNumber, number);
     setPhoneNumber(countryNumber + number);
+    
+    router.replace({
+      query: {
+        ...router.query,
+        phone: phoneNumber
+      }
+    })
   }
 
   function sendWhatsapp() {

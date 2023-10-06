@@ -12,6 +12,8 @@ const Input = ({
 }) => {
   const imageLoader = () => `https://flagcdn.com/16x12/${data.countryCode}.png`;
 
+  console.log({data})
+
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
     onCallbackInput(event.target.value);
   }
