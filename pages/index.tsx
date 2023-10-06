@@ -31,8 +31,9 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!router.isReady) return;
 
-    if (router.query) {
-      const { phone } = router.query;
+    const { phone } = router.query;
+
+    if (phone) {
       mutatePhoneNumber(phone as string);
     }
   }, [router.isReady]);
@@ -53,6 +54,8 @@ const Home: NextPage = () => {
   }
 
   function mutatePhoneNumber(number: string) {
+    if (!number) return;
+    
     number = number.replace(/\s/g, ""); // remove whitespace
 
     if (number.length < 10) return;
