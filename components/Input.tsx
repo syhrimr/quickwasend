@@ -1,107 +1,32 @@
 import Image from "next/image";
 
-import { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent } from "react";
 
-import countryCodeList from "../data/countryPhoneCodes.json";
-import autocomplete from "../utils/autocomplete";
-import devicecheck from "../utils/devicecheck";
-
-const Input = ({ initData: data, error, changeInputValue }) => {
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
-  const [countryCode, setCountryCode] = useState<string | undefined>("id");
-  const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
-  const [countryNumber, setCountryNumber] = useState<string | undefined>("");
-
-  const imageLoader = () => `https://flagcdn.com/16x12/${countryCode}.png`;
-
-  useEffect(() => {
-    if (data && !error) {
-      setCountryCode(data.location.country?.code.toLowerCase());
-      setCountryName(data.location.country?.name);
-      setCountryNumber(data.location.country?.calling_code);
-    }
-  }, [data, error])
+const Input = ({
+  data,
+  onCallbackInput,
+  onCallbackSubmit,
+  onCallbackClear,
+  onCallbackPaste,
+  triggerAutocomplete
+}) => {
+  const imageLoader = () => `https://flagcdn.com/16x12/${data.countryCode}.png`;
 
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    mutatePhoneNumber(event.target.value);
+    onCallbackInput(event.target.value);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    sendWhatsapp(phoneNumber);
+    onCallbackSubmit();
   }
 
-  async function mutatePhoneNumber(number: string) {
-    number = number.replace(/\s/g, ""); // remove whitespace
-
-    if (number.length < 10) return;
-
-    const codeNumbers = countryCodeList.map(item => item.code);
-
-    if (number.charAt(0) === "+") {
-      setCountryNumber(number.slice(1, 3))
-      number = number.slice(3);
-    } else if (number.charAt(0) === "0") {
-      const selectedItem = countryCodeList.find(code => {
-        return code.iso == countryCode.toUpperCase()
-      });
-      
-      setCountryNumber(selectedItem?.code);
-      number = number.slice(1);
-    } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
-      setCountryNumber(number.slice(0, 2))
-      number = number.slice(2);
-    }
-    
-    changeInputValue(countryNumber, number);
-    setPhoneNumber(countryNumber + number);
+  function handleClear() {
+    onCallbackClear();
   }
 
-  function sendWhatsapp(number: string | undefined) {
-    // navigate to web WA to directly open chat window
-    if (!number) {
-      alert("Please insert the right number!");
-      return;
-    }
-    const { isMobile } = devicecheck();
-    const baseURL = `https://${isMobile ? "api" : "web"}.whatsapp.com/send`;
-    const query = new URLSearchParams({
-      "phone": number
-    });
-    const url = `${baseURL}/?${query}`;
-    window.open(url, "_blank");
-  }
-
-  async function handlePaste() {
-    
-    const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-    let pasteResult = await navigator.clipboard.readText();
-    pasteResult = pasteResult.replace(/\s/g, ""); // remove whitespace
-    
-    if (!phoneNumberRegex.test(pasteResult)) {
-      alert("The paste phone number is invalid! The correct sample format e.g. 08123456789");
-      return;
-    }
-    
-    changeInputValue(); // reset field
-    mutatePhoneNumber(pasteResult);
-  }
-
-  function triggerAutocomplete() {
-    const codeNumbers = countryCodeList.map(item => item.code);
-    const autocompleteInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
-    autocomplete(autocompleteInput, codeNumbers, (value: string): void => {
-      setCountryNumber(value);
-    });
-  }
-
-  function clearPhoneNumber() {
-    setCountryCode(data.location.country?.code.toLowerCase());
-    setCountryName(data.location.country?.name);
-    setCountryNumber(data.location.country?.calling_code);
-    setPhoneNumber("");
-
-    changeInputValue(countryNumber);
+  function handlePaste() {
+    onCallbackPaste();
   }
 
   return (
@@ -114,10 +39,10 @@ const Input = ({ initData: data, error, changeInputValue }) => {
             >
               <Image
                 loader={imageLoader}
-                src={`https://flagcdn.com/16x12/${countryCode}.png`}
+                src={`https://flagcdn.com/16x12/${data.countryCode}.png`}
                 width={16}
                 height={12}
-                alt={countryName}
+                alt={data.countryName}
                 className="h-[12px] my-auto"
               />
 
@@ -125,7 +50,7 @@ const Input = ({ initData: data, error, changeInputValue }) => {
                 id="autoCompleteInput"
                 className="block w-full h-10 pl-3 bg-transparent focus:outline-none"
                 placeholder="62"
-                defaultValue={countryNumber}
+                defaultValue={data.countryNumber}
                 type="text"
                 pattern="[0-9]*"
                 onFocus={triggerAutocomplete}
@@ -163,7 +88,7 @@ const Input = ({ initData: data, error, changeInputValue }) => {
                 className="h-full m-auto"
                 title="Clear input button"
                 type="button"
-                onClick={clearPhoneNumber}
+                onClick={handleClear}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
