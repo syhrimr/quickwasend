@@ -1,24 +1,29 @@
-Welcome to the NextJS base template bootstrapped using the `create-next-app`. This template supports TypeScript, but you can use normal JavaScript as well.
+# Overview
 
-## Getting Started
+![QuickWhatsApp's logo](https://cdn.discordapp.com/attachments/1161166907265777674/1161166987628662797/qwas.png?ex=65375007&is=6524db07&hm=6f23af0e8c18cd9ef5b232c12374c9185962aaedf9377c4097a9cd65fa4a1b8f&)
 
-Hit the run button to start the development server.
+**QuickWhatsAppSend** is a shortcut for chatting with WhatsApp without saving any phone number to your contact.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Background
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on `/api/hello`. This endpoint can be edited in `pages/api/hello.ts`.
+I'm a type of person that rarely save a number to my phone contact, especially to only used once number. When using WhatsApp, you have to save the person number first before chatting them and that's kind of issue for me.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+For a while, I've been used a shortcut through WhatsApp API URL by copy paste a number to `phone` query then fix the number format to fit in before chatting without saving a number. Somehow this practice still need more steps to do.
 
-## Learn More
+By doing this struggle inspired me to build an app for a shortcut optimize the steps 🤩. It just by copy paste a number and click one button to start chatting in WhatsApp.
 
-To learn more about Next.js, take a look at the following resources:
+## Used API
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+>> This app only request to one API endpoint of [ipgregistry.co](https://ipregistry.co/) to get IP location data to validate your country phone number. For the rest, there is no API request to any server to store any phone number from your input.
 
-## Productionizing your Next App
+#### Get location data
 
-To make your next App run smoothly in production make sure to [turn this repl to an always-on repl.](https://docs.replit.com/hosting/enabling-always-on)
+```http
+  GET /
+```
 
-You can also produce a production build by running `npm run build` and [changing the run command](https://docs.replit.com/programming-ide/configuring-repl#run) to `npm run start`.
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `key` | `string` | **Required**. Your API key from [ipgregistry.co](https://ipregistry.co/) |
+
+Please place the API Key value in `.env` file.
