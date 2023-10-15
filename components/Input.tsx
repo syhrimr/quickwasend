@@ -30,7 +30,7 @@ const Input = ({
   }
 
   return (
-    <form className="px-8 mt-10 mx-auto w-96" onSubmit={handleSubmit}>
+    <form className="px-8 mx-auto w-96" onSubmit={handleSubmit}>
       <div className="flex flex-row w-auto mb-8">
         <div className="flex flex-row w-[90%] bg-white border border-slate-300 rounded-md">
           <label className="block w-[30%] border-r-1">

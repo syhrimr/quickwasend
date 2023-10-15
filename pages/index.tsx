@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
 import Input from "../components/Input";
+import Image from "next/image";
 
 import useCountryInfo from "../hooks/useCountryInfo";
 import countryCodeList from "../data/countryPhoneCodes.json";
@@ -55,7 +56,7 @@ const Home: NextPage = () => {
 
   function mutatePhoneNumber(number: string) {
     if (!number) return;
-    
+
     number = number.replace(/\s/g, ""); // remove whitespace
 
     if (number.length < 10) return;
@@ -141,7 +142,30 @@ const Home: NextPage = () => {
         Quick Whatsapp Send!
       </h1>
 
-      <p className="px-14">Copy-paste or input a Whatsapp number and press <span className="font-bold text-[#4AC959]">SEND</span> to start chat with it quickly!</p>
+      <a
+        className="inline-flex flew-row mb-10 hover:translate-y-[-2px] hover:drop-shadow-md"
+        href="https://github.com/syhrimr/quickwasend"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View on{" "}
+        <Image
+          src="/github.svg"
+          alt="GitHub Logo"
+          width={18}
+          height={18}
+          className="ml-1"
+        />
+        <strong>GitHub</strong>
+      </a>
+
+      <p className="px-12 mb-10">
+        A shortcut to start chat with WhatsApp. Just copy-paste or input a Whatsapp number and press{" "}
+        <span className="font-bold text-[#4AC959]">
+          SEND{" "}
+        </span>
+        to start chat with it quickly!
+      </p>
 
       <Input
         data={parsedData}
