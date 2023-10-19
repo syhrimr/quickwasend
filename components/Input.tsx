@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent } from "react";
 
 const Input = ({
   data,
-  onCallbackInput,
+  onCallbackChange,
   onCallbackSubmit,
   onCallbackClear,
   onCallbackPaste,
@@ -12,8 +12,8 @@ const Input = ({
 }) => {
   const imageLoader = () => `https://flagcdn.com/16x12/${data.countryCode}.png`;
 
-  function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    onCallbackInput(event.target.value);
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    onCallbackChange(event.target.value);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -81,7 +81,7 @@ const Input = ({
                 type="text"
                 pattern="[0-9]*"
                 placeholder="812345678"
-                onInput={handleInput}
+                onChange={handleChange}
               />
 
               <button

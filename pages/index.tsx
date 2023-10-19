@@ -2,7 +2,7 @@
 import type { NextPage } from "next";
 
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import Input from "../components/Input";
 import Image from "next/image";
@@ -14,18 +14,20 @@ import devicecheck from "../utils/devicecheck";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { data, error, isLoading } = useCountryInfo();
+  const { data, error } = useCountryInfo();
 
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
-  const [countryCode, setCountryCode] = useState<string | undefined>("id");
-  const [countryName, setCountryName] = useState<string | undefined>("Indonesia");
-  const [countryNumber, setCountryNumber] = useState<string | undefined>("");
+  const phoneNumber = useRef("");
+  const countryCode = useRef("id");
+  const countryName = useRef("Indonesia");
+  const countryNumber = useRef("");
+  const isDataExist = useRef(false);
 
   useEffect(() => {
-    if (data && !error) {
-      setCountryCode(data.location.country?.code.toLowerCase());
-      setCountryName(data.location.country?.name);
-      setCountryNumber(data.location.country?.calling_code);
+    if (data && !error && !isDataExist) {
+      countryCode.current = data.location.country?.code.toLowerCase();
+      countryName.current = data.location.country?.name;
+      countryNumber.current = data.location.country?.calling_code;
+      isDataExist.current = true;
     }
   }, [data, error]);
 
@@ -40,10 +42,10 @@ const Home: NextPage = () => {
   }, [router.isReady]);
   
   const parsedData = {
-    phoneNumber,
-    countryCode,
-    countryName,
-    countryNumber
+    phoneNumber: phoneNumber.current,
+    countryCode: countryCode.current,
+    countryName: countryName.current,
+    countryNumber: countryNumber.current
   };
 
   function changeInputValue(codeValue: string | undefined = "", phoneValue: string | undefined = "") {
@@ -55,51 +57,47 @@ const Home: NextPage = () => {
   }
 
   function mutatePhoneNumber(number: string) {
-    if (!number) return;
-
-    number = number.replace(/\s/g, ""); // remove whitespace
-
-    if (number.length < 10) return;
+    number = number.replace(/\s/g, "");
 
     const codeNumbers = countryCodeList.map(item => item.code);
 
     if (number.charAt(0) === "+") {
-      setCountryNumber(number.slice(1, 3))
+      countryNumber.current = number.slice(1, 3);
       number = number.slice(3);
     } else if (number.charAt(0) === "0") {
       const selectedItem = countryCodeList.find(code => {
-        return code.iso == countryCode.toUpperCase();
+        return code.iso == countryCode.current.toUpperCase();
       });
       
-      setCountryNumber(selectedItem?.code);
+      countryNumber.current = selectedItem?.code;
       number = number.slice(1);
-    } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber) {
+    } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber.current) {
       parsedData.countryNumber = number.slice(0, 2);
-      setCountryNumber(number.slice(0, 2));
+      countryNumber.current = number.slice(0, 2);
       number = number.slice(2);
     }
 
-    changeInputValue(countryNumber, number);
-    setPhoneNumber(countryNumber + number);
-    
+    changeInputValue(countryNumber.current, number);
+    phoneNumber.current = countryNumber.current + number;
+
     router.replace({
       query: {
         ...router.query,
-        phone: phoneNumber
+        phone: phoneNumber.current
       }
-    })
+    });
   }
 
   function sendWhatsapp() {
     // navigate to web WA to directly open chat window
-    if (!phoneNumber) {
+    if (!phoneNumber.current) {
       alert("Please insert the right number!");
       return;
     }
     const { isMobile } = devicecheck();
     const baseURL = `https://${isMobile ? "api" : "web"}.whatsapp.com/send`;
     const query = new URLSearchParams({
-      "phone": phoneNumber
+      "phone": phoneNumber.current
     });
     const url = `${baseURL}/?${query}`;
     window.open(url, "_blank");
@@ -120,19 +118,26 @@ const Home: NextPage = () => {
   }
 
   function clearPhoneNumber() {
-    setCountryCode(data.location.country?.code.toLowerCase());
-    setCountryName(data.location.country?.name);
-    setCountryNumber(data.location.country?.calling_code);
-    setPhoneNumber("");
+    countryCode.current = data.location.country?.code.toLowerCase();
+    countryName.current = data.location.country?.name;
+    countryNumber.current = data.location.country?.calling_code;
+    phoneNumber.current = "";
 
-    changeInputValue(countryNumber);
+    changeInputValue(countryNumber.current);
+
+    router.replace({
+      query: {
+        ...router.query,
+        phone: ""
+      }
+    });
   }
 
   function triggerAutocomplete() {
     const codeNumbers = countryCodeList.map(item => item.code);
     const autocompleteInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
     autocomplete(autocompleteInput, codeNumbers, (value: string): void => {
-      setCountryNumber(value);
+      countryNumber.current = value;
     });
   }
 
@@ -169,7 +174,7 @@ const Home: NextPage = () => {
 
       <Input
         data={parsedData}
-        onCallbackInput={mutatePhoneNumber}
+        onCallbackChange={mutatePhoneNumber}
         onCallbackSubmit={sendWhatsapp}
         onCallbackClear={clearPhoneNumber}
         onCallbackPaste={handlePaste}
