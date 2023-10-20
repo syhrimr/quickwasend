@@ -2,7 +2,13 @@ import useSWR from "swr";
 import { AxiosError } from "axios";
 import { getCountryInfo } from "../network/countryApi";
 
-export default function useCountryInfo() {
+interface CountryInfoOutput {
+  data: any;
+  error: any;
+  isLoading: boolean;
+}
+
+export default function useCountryInfo(): CountryInfoOutput {
   const { data, error, isLoading } = useSWR("country-info", async () => {
     try {
       return await getCountryInfo();
@@ -20,6 +26,6 @@ export default function useCountryInfo() {
   return {
     data,
     error,
-    isLoading
+    isLoading,
   };
 }

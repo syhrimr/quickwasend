@@ -1,21 +1,22 @@
-type AutoCompleteCallback = (t: string) => void
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+type AutoCompleteCallback = (t: string) => void;
 
 export default function autocomplete(
   inp: HTMLInputElement,
   arr: string[],
   cb: AutoCompleteCallback
-) {
+): void {
   let currentFocus: number;
 
-  inp.addEventListener("input", function() {
-    let a: HTMLElement, b: HTMLElement;
+  inp.addEventListener("input", function () {
+    const a: HTMLElement = document.createElement("DIV");
+    let b: HTMLElement;
     const val = this.value;
     closeAllLists();
     if (!val) {
       return false;
     }
     currentFocus = -1;
-    a = document.createElement("DIV");
     a.setAttribute("id", `${this.id}autocomplete-list`);
     a.setAttribute("class", "autocomplete-items");
 
@@ -27,7 +28,7 @@ export default function autocomplete(
         b.innerHTML = `<strong>${arr[i].substring(0, val.length)}</strong>`;
         b.innerHTML += arr[i].substring(val.length);
         b.innerHTML += `<input type='hidden' value='${arr[i]}'>`;
-        b.addEventListener("click", function() {
+        b.addEventListener("click", function () {
           inp.value = this.getElementsByTagName("input")[0].value;
           cb(inp.value);
           closeAllLists();
@@ -37,10 +38,13 @@ export default function autocomplete(
     }
   });
 
-  inp.addEventListener("keydown", function(e: KeyboardEvent) {
-    let x: HTMLElement = document.getElementById(`${this.id}autocomplete-list`);
-    let y: NodeListOf<HTMLDivElement>;
-    if (x) y = x.querySelectorAll("div");
+  inp.addEventListener("keydown", function (e: KeyboardEvent): void {
+    const x: HTMLElement | null = document.getElementById(
+      `${this.id}autocomplete-list`
+    );
+    const y: NodeListOf<HTMLDivElement> | undefined = x
+      ? x.querySelectorAll("div")
+      : undefined;
 
     if (e.key === "ArrowDown") {
       currentFocus++;
@@ -56,23 +60,25 @@ export default function autocomplete(
     }
   });
 
-  function addActive(x: NodeListOf<HTMLDivElement> | undefined) {
-    if (!x) return false;
+  function addActive(x: NodeListOf<HTMLDivElement> | undefined): void {
+    if (!x) return;
     removeActive(x);
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = x.length - 1;
     x[currentFocus].classList.add("autocomplete-active");
   }
 
-  function removeActive(x: NodeListOf<HTMLDivElement> | undefined) {
+  function removeActive(x: NodeListOf<HTMLDivElement> | undefined): void {
     if (!x) return;
     for (let i = 0; i < x.length; i++) {
       x[i].classList.remove("autocomplete-active");
     }
   }
 
-  function closeAllLists(elmnt?: HTMLElement) {
-    const x = document.getElementsByClassName("autocomplete-items") as HTMLCollectionOf<HTMLElement>;
+  function closeAllLists(elmnt?: HTMLElement): void {
+    const x = document.getElementsByClassName(
+      "autocomplete-items"
+    ) as HTMLCollectionOf<HTMLElement>;
     for (let i = 0; i < x.length; i++) {
       if (elmnt !== x[i] && elmnt !== inp) {
         x[i].parentNode?.removeChild(x[i]);
@@ -80,7 +86,7 @@ export default function autocomplete(
     }
   }
 
-  document.addEventListener("click", function(e: MouseEvent) {
+  document.addEventListener("click", function (e: MouseEvent) {
     closeAllLists(e.target as HTMLElement);
   });
 }

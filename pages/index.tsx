@@ -16,14 +16,14 @@ const Home: NextPage = () => {
   const router = useRouter();
   const { data, error } = useCountryInfo();
 
-  const phoneNumber = useRef("");
-  const countryCode = useRef("id");
-  const countryName = useRef("Indonesia");
-  const countryNumber = useRef("");
+  const phoneNumber = useRef<string>("");
+  const countryCode = useRef<string>("id");
+  const countryName = useRef<string>("Indonesia");
+  const countryNumber = useRef<string | undefined>("");
   const isDataExist = useRef(false);
 
   useEffect(() => {
-    if (data && !error && !isDataExist) {
+    if (data !== undefined && error === undefined && !isDataExist.current) {
       countryCode.current = data.location.country?.code.toLowerCase();
       countryName.current = data.location.country?.name;
       countryNumber.current = data.location.country?.calling_code;
@@ -36,42 +36,53 @@ const Home: NextPage = () => {
 
     const { phone } = router.query;
 
-    if (phone) {
+    if (phone !== "" || phone !== undefined) {
       mutatePhoneNumber(phone as string);
     }
   }, [router.isReady]);
-  
+
   const parsedData = {
     phoneNumber: phoneNumber.current,
     countryCode: countryCode.current,
     countryName: countryName.current,
-    countryNumber: countryNumber.current
+    countryNumber: countryNumber.current,
   };
 
-  function changeInputValue(codeValue: string | undefined = "", phoneValue: string | undefined = "") {
-    const codeInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
-    const phoneInput = document.getElementById("phoneInput") as HTMLInputElement;
+  function changeInputValue(
+    codeValue: string | undefined = "",
+    phoneValue: string | undefined = ""
+  ): void {
+    const codeInput = document.getElementById(
+      "autoCompleteInput"
+    ) as HTMLInputElement;
+    const phoneInput = document.getElementById(
+      "phoneInput"
+    ) as HTMLInputElement;
 
     codeInput.value = codeValue;
     phoneInput.value = phoneValue;
   }
 
-  function mutatePhoneNumber(number: string) {
-    number = number.replace(/\s/g, "");
+  function mutatePhoneNumber(number: string | undefined): void {
+    number = (number ?? "").replace(/\s/g, "");
 
-    const codeNumbers = countryCodeList.map(item => item.code);
+    const codeNumbers = countryCodeList.map((item) => item.code);
 
     if (number.charAt(0) === "+") {
       countryNumber.current = number.slice(1, 3);
       number = number.slice(3);
     } else if (number.charAt(0) === "0") {
-      const selectedItem = countryCodeList.find(code => {
-        return code.iso == countryCode.current.toUpperCase();
+      const selectedItem = countryCodeList.find((code) => {
+        return code.iso === countryCode.current.toUpperCase();
       });
-      
+
       countryNumber.current = selectedItem?.code;
       number = number.slice(1);
-    } else if (codeNumbers.includes(number.substring(0, 2)) && !countryNumber.current) {
+    } else if (
+      codeNumbers.includes(number.substring(0, 2)) &&
+      countryNumber.current === ""
+    ) {
+      console.log("masuk sini", countryNumber.current);
       parsedData.countryNumber = number.slice(0, 2);
       countryNumber.current = number.slice(0, 2);
       number = number.slice(2);
@@ -80,44 +91,48 @@ const Home: NextPage = () => {
     changeInputValue(countryNumber.current, number);
     phoneNumber.current = countryNumber.current + number;
 
-    router.replace({
+    void router.replace({
       query: {
         ...router.query,
-        phone: phoneNumber.current
-      }
+        phone: phoneNumber.current,
+      },
     });
   }
 
-  function sendWhatsapp() {
+  function sendWhatsapp(): void {
     // navigate to web WA to directly open chat window
-    if (!phoneNumber.current) {
+    if (phoneNumber.current === "") {
       alert("Please insert the right number!");
       return;
     }
     const { isMobile } = devicecheck();
     const baseURL = `https://${isMobile ? "api" : "web"}.whatsapp.com/send`;
     const query = new URLSearchParams({
-      "phone": phoneNumber.current
+      phone: phoneNumber.current,
     });
-    const url = `${baseURL}/?${query}`;
+    const url = `${baseURL}/?${query.toString()}`;
     window.open(url, "_blank");
   }
 
-  async function handlePaste() {    
-    const phoneNumberRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+  async function handlePaste(): Promise<void> {
+    const phoneNumberRegex =
+      // eslint-disable-next-line no-useless-escape
+      /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
     let pasteResult = await navigator.clipboard.readText();
     pasteResult = pasteResult.replace(/\s/g, ""); // remove whitespace
-    
+
     if (!phoneNumberRegex.test(pasteResult)) {
-      alert("The paste phone number is invalid! The correct sample format: e.g. 08123456789");
+      alert(
+        "The paste phone number is invalid! The correct sample format: e.g. 08123456789"
+      );
       return;
     }
-    
+
     changeInputValue(); // reset field
     mutatePhoneNumber(pasteResult);
   }
 
-  function clearPhoneNumber() {
+  function clearPhoneNumber(): void {
     countryCode.current = data.location.country?.code.toLowerCase();
     countryName.current = data.location.country?.name;
     countryNumber.current = data.location.country?.calling_code;
@@ -125,17 +140,19 @@ const Home: NextPage = () => {
 
     changeInputValue(countryNumber.current);
 
-    router.replace({
+    void router.replace({
       query: {
         ...router.query,
-        phone: ""
-      }
+        phone: "",
+      },
     });
   }
 
-  function triggerAutocomplete() {
-    const codeNumbers = countryCodeList.map(item => item.code);
-    const autocompleteInput = document.getElementById("autoCompleteInput") as HTMLInputElement;
+  function triggerAutocomplete(): void {
+    const codeNumbers = countryCodeList.map((item) => item.code);
+    const autocompleteInput = document.getElementById(
+      "autoCompleteInput"
+    ) as HTMLInputElement;
     autocomplete(autocompleteInput, codeNumbers, (value: string): void => {
       countryNumber.current = value;
     });
@@ -143,9 +160,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="text-center">
-      <h1 className="text-3xl font-bold mb-4">
-        Quick Whatsapp Send!
-      </h1>
+      <h1 className="text-3xl font-bold mb-4">Quick Whatsapp Send!</h1>
 
       <a
         className="inline-flex flew-row mb-10 hover:translate-y-[-2px] hover:drop-shadow-md"
@@ -165,10 +180,9 @@ const Home: NextPage = () => {
       </a>
 
       <p className="px-12 mb-10">
-        A shortcut to start chat with WhatsApp. Just copy-paste or input a Whatsapp number and press{" "}
-        <span className="font-bold text-[#4AC959]">
-          SEND{" "}
-        </span>
+        A shortcut to start chat with WhatsApp. Just copy-paste or input a
+        Whatsapp number and press{" "}
+        <span className="font-bold text-[#4AC959]">SEND </span>
         to start chat with it quickly!
       </p>
 
@@ -181,7 +195,7 @@ const Home: NextPage = () => {
         triggerAutocomplete={triggerAutocomplete}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

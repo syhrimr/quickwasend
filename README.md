@@ -14,7 +14,7 @@ By doing this struggle inspired me to build an app for a shortcut optimize the s
 
 ## Used API
 
->> This app only request to one API endpoint of [ipgregistry.co](https://ipregistry.co/) to get IP location data to validate your country phone number. For the rest, there is no API request to any server to store any phone number from your input.
+> > This app only request to one API endpoint of [ipgregistry.co](https://ipregistry.co/) to get IP location data to validate your country phone number. For the rest, there is no API request to any server to store any phone number from your input.
 
 #### Get location data
 
@@ -22,8 +22,8 @@ By doing this struggle inspired me to build an app for a shortcut optimize the s
   GET /
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `key` | `string` | **Required**. Your API key from [ipgregistry.co](https://ipregistry.co/) |
+| Parameter | Type     | Description                                                              |
+| :-------- | :------- | :----------------------------------------------------------------------- |
+| `key`     | `string` | **Required**. Your API key from [ipgregistry.co](https://ipregistry.co/) |
 
 Please place the API Key value in `.env` file.
