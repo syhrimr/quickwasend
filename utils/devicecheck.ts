@@ -1,4 +1,4 @@
-type DeviceCheckOutput = {
+interface DeviceCheckOutput {
   isMobile: boolean;
 }
 
@@ -9,7 +9,7 @@ export default function devicecheck(): DeviceCheckOutput {
     /iPhone/i,
     /iPod/i,
     /BlackBerry/i,
-    /Windows Phone/i
+    /Windows Phone/i,
   ];
 
   const isMobile = toMatch.some((toMatchItem) => {
