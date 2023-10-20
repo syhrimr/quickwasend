@@ -8,3 +8,5 @@
 .git
 replit.nix
 .replit
+*.config.js
+README.md
