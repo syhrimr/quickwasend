@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '🏗️🧑🏻‍💻 Styling and testing your project before committing'
+
+# Check tsconfig standards
+pnpm check-types || 
+(
+  echo '❌ Failed in Type Check ❌'
+  false;
+)
+
+# Check prettier standards
+pnpm check-format || 
+(
+  echo '❌ Failed in Code Styling Check ❌'
+  false;
+)
+
+# Check linting standards
+pnpm check-lint || 
+(
+  echo '❌ Failed in ESLint Check ❌'
+  false;
+)
+
+echo '✅ Your code looks GREAT!! ✅'
