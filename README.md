@@ -12,18 +12,6 @@ For a while, I've been used a shortcut through WhatsApp API URL by copy paste a 
 
 By doing this struggle inspired me to build an app for a shortcut optimize the steps 🤩. It just by copy paste a number and click one button to start chatting in WhatsApp.
 
-## Used API
+## Contributing
 
->> This app only request to one API endpoint of [ipgregistry.co](https://ipregistry.co/) to get IP location data to validate your country phone number. For the rest, there is no API request to any server to store any phone number from your input.
-
-#### Get location data
-
-```http
-  GET /
-```
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `key` | `string` | **Required**. Your API key from [ipgregistry.co](https://ipregistry.co/) |
-
-Please place the API Key value in `.env` file.
+Start contributing to this project by following [this guideline](./CONTRIBUTING.md).
