@@ -1,32 +1,49 @@
 import Image from "next/image";
 
-import { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+
+interface PhoneDetailData {
+  phoneNumber: string;
+  countryCode: string;
+  countryName: string;
+  countryNumber: string | undefined;
+}
+
+interface InputElementProps {
+  data: PhoneDetailData;
+  onCallbackChange: (number: string) => void;
+  onCallbackSubmit: () => void;
+  onCallbackClear: () => void;
+  onCallbackPaste: () => Promise<void>;
+  triggerAutocomplete: () => void;
+}
 
 const Input = ({
   data,
-  onCallbackInput,
+  onCallbackChange,
   onCallbackSubmit,
   onCallbackClear,
   onCallbackPaste,
-  triggerAutocomplete
-}) => {
-  const imageLoader = () => `https://flagcdn.com/16x12/${data.countryCode}.png`;
+  triggerAutocomplete,
+}: InputElementProps): JSX.Element => {
+  const imageLoader = (): string =>
+    `https://flagcdn.com/16x12/${data.countryCode}.png`;
 
-  function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    onCallbackInput(event.target.value);
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
+    onCallbackChange(event.target.value);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     onCallbackSubmit();
   }
 
-  function handleClear() {
+  function handleClear(): void {
     onCallbackClear();
   }
 
-  function handlePaste() {
-    onCallbackPaste();
+  function handlePaste(): void {
+    void onCallbackPaste();
   }
 
   return (
@@ -34,9 +51,7 @@ const Input = ({
       <div className="flex flex-row w-auto mb-8">
         <div className="flex flex-row w-[90%] bg-white border border-slate-300 rounded-md">
           <label className="block w-[30%] border-r-1">
-            <div
-              className="flex flex-row relative px-2"
-            >
+            <div className="flex flex-row relative px-2">
               <Image
                 loader={imageLoader}
                 src={`https://flagcdn.com/16x12/${data.countryCode}.png`}
@@ -55,7 +70,7 @@ const Input = ({
                 pattern="[0-9]*"
                 onFocus={triggerAutocomplete}
               />
-              
+
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -81,7 +96,7 @@ const Input = ({
                 type="text"
                 pattern="[0-9]*"
                 placeholder="812345678"
-                onInput={handleInput}
+                onChange={handleChange}
               />
 
               <button
@@ -101,7 +116,7 @@ const Input = ({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12" 
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
               </button>
@@ -127,7 +142,8 @@ const Input = ({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+              />
             </svg>
           </button>
         </label>
@@ -140,7 +156,7 @@ const Input = ({
         Send
       </button>
     </form>
-  )
+  );
 };
 
 export default Input;
