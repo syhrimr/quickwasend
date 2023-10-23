@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
-import Input from "../components/Input";
+import FormInput from "../components/FormInput";
 import Image from "next/image";
 
 import useCountryInfo from "../hooks/useCountryInfo";
@@ -186,7 +186,7 @@ const Home: NextPage = () => {
         to start chat with it quickly!
       </p>
 
-      <Input
+      <FormInput
         data={parsedData}
         onCallbackChange={mutatePhoneNumber}
         onCallbackSubmit={sendWhatsapp}
