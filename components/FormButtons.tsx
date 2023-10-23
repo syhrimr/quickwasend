@@ -1,5 +1,5 @@
 export default function FormButtons(): JSX.Element {
-  function generateShortenedLink(): void {
+  async function generateShortenedLink(): Promise<void> {
     const baseUrl = "https://wa.me";
     const currentUrl = new URL(window.location.href);
     const params = new URLSearchParams(currentUrl.search);
@@ -10,7 +10,7 @@ export default function FormButtons(): JSX.Element {
     }
 
     const shortenedUrl = new URL(params.get("phone") as string | URL, baseUrl);
-    void navigator.clipboard.writeText(shortenedUrl.toString());
+    await navigator.clipboard.writeText(shortenedUrl.toString());
     alert("Shortened WhatsApp link already copied to the clipboard!");
   }
 
@@ -27,7 +27,9 @@ export default function FormButtons(): JSX.Element {
         <button
           className="w-full px-8 py-2 text-base text-gray-600 font-semibold rounded-full border border-[#4AC959] bg-transparent hover:translate-y-[-2px] hover:shadow-md"
           type="button"
-          onClick={generateShortenedLink}
+          onClick={() => {
+            void generateShortenedLink();
+          }}
         >
           Generate
         </button>
