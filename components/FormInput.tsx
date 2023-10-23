@@ -29,6 +29,7 @@ export default function FormInput({
 }: InputElementProps): JSX.Element {
   const imageLoader = (): string =>
     `https://flagcdn.com/16x12/${data.countryCode}.png`;
+  console.log(data);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>): void {
     onCallbackChange(event.target.value);

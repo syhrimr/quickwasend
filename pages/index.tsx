@@ -82,7 +82,6 @@ const Home: NextPage = () => {
       codeNumbers.includes(number.substring(0, 2)) &&
       countryNumber.current === ""
     ) {
-      console.log("masuk sini", countryNumber.current);
       parsedData.countryNumber = number.slice(0, 2);
       countryNumber.current = number.slice(0, 2);
       number = number.slice(2);
