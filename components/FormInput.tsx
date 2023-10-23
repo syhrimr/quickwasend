@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FormButtons from "./FormButtons";
 
 import type { ChangeEvent, FormEvent } from "react";
 
@@ -18,14 +19,14 @@ interface InputElementProps {
   triggerAutocomplete: () => void;
 }
 
-const Input = ({
+export default function FormInput({
   data,
   onCallbackChange,
   onCallbackSubmit,
   onCallbackClear,
   onCallbackPaste,
   triggerAutocomplete,
-}: InputElementProps): JSX.Element => {
+}: InputElementProps): JSX.Element {
   const imageLoader = (): string =>
     `https://flagcdn.com/16x12/${data.countryCode}.png`;
 
@@ -149,14 +150,7 @@ const Input = ({
         </label>
       </div>
 
-      <button
-        className="px-8 py-2 text-base text-slate-50 font-semibold rounded-full border-none bg-[#4AC959] hover:translate-y-[-2px] hover:shadow-md"
-        type="submit"
-      >
-        Send
-      </button>
+      <FormButtons />
     </form>
   );
-};
-
-export default Input;
+}

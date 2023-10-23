@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
-import Input from "../components/Input";
+import FormInput from "../components/FormInput";
 import Image from "next/image";
 
 import useCountryInfo from "../hooks/useCountryInfo";
@@ -82,7 +82,6 @@ const Home: NextPage = () => {
       codeNumbers.includes(number.substring(0, 2)) &&
       countryNumber.current === ""
     ) {
-      console.log("masuk sini", countryNumber.current);
       parsedData.countryNumber = number.slice(0, 2);
       countryNumber.current = number.slice(0, 2);
       number = number.slice(2);
@@ -186,7 +185,7 @@ const Home: NextPage = () => {
         to start chat with it quickly!
       </p>
 
-      <Input
+      <FormInput
         data={parsedData}
         onCallbackChange={mutatePhoneNumber}
         onCallbackSubmit={sendWhatsapp}
